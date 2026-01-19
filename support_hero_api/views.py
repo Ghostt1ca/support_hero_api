@@ -2,7 +2,8 @@ from django.shortcuts import render
 from .models import Ticket, Category, Comment
 from rest_framework import generics, permissions, viewsets
 from .serializers import TicketSerializer
-
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,6 +30,11 @@ class TicketViewSet(viewsets.ModelViewSet):
         ticket.save()
 
         return Response({"status": "Ticket was marked as resolve !"})
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'status']
+    search_fields = ['title', 'description']
+    ordering_fields = ['created_at', 'status']
 
     def get_queryset(self):
         user = self.request.user
